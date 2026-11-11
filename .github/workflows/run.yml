@@ -25,6 +25,8 @@ jobs:
         env:
             CONFIG: ${{ secrets.CONFIG }}
             AES_KEY: ${{ secrets.AES_KEY }}
+            MIN_STEP: ${{ vars.MIN_STEP }}
+            MAX_STEP: ${{ vars.MAX_STEP }}
         run: |
           pip3 install -r requirements.txt
           if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then

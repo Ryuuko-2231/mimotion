@@ -97,7 +97,7 @@
   | USER                    | 小米运动登录账号，仅支持小米运动账号对应的手机号或邮箱，不支持小米账号                                                                            |
   | PWD                     | 小米运动登录密码，仅支持小米运动账号对应的密码                                                                                        |
   | MIN_STEP                | 最小步数                                                                                                           |
-  | MAX_STEP                | 最大步数，最大步数和最小步数随机范围随着时间线性增加，北京时间22点达到最大值                                                                        |
+  | MAX_STEP                | 最大步数，直接在最小值和最大值之间随机取值。仓库 Variables 中的 MIN_STEP / MAX_STEP 优先于 CONFIG                                                                        |
   | PUSH_PLUS_TOKEN         | 推送加的个人token,申请地址[pushplus](https://www.pushplus.plus/push1.html)，工作流执行完成后推送每个账号的执行状态信息，如没有则不要填写                |
   | PUSH_PLUS_HOUR          | 限制只在某个整点进行pushplus的推送，值为整数，比如设置21，则只在北京时间21点XX分执行时才进行pushplus的消息推送。如不设置或值非数字则每次执行后都会进行推送                       |
   | PUSH_WECHAT_WEBHOOK_KEY | 企业微信推送通知的key，企业微信webhook机器人推送全地址为：https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={机器人的key}，这里配置{机器人的key} |
@@ -128,6 +128,8 @@
 #### 注意 **#** 分隔的账号和密码数量必须匹配，否则将跳过执行
 
 ### 四、每日随机提交
+
+本 Fork 每次直接在仓库 Variables 的 `MIN_STEP`–`MAX_STEP` 之间随机提交，目前设置为 10000–19999 步。
 
 本 Fork 每天 19:17（UTC+8）运行 `Random Cron`，为次日 08:00–18:00 随机选一个分钟。
 排程延迟到次日凌晨或白天时，会使用当天剩余时段，并保留已经生成的当日计划。
