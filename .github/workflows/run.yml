@@ -2,7 +2,7 @@ name: 刷步数
 
 on:
   schedule:
-    - cron: '28 3 12 11 *'
+    - cron: '58 4 13 11 *'
   workflow_dispatch:
 
 concurrency: mimotion-state
