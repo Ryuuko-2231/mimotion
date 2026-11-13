@@ -14,6 +14,7 @@ import os
 from util.aes_help import encrypt_data, decrypt_data
 import util.zepp_helper as zeppHelper
 import util.push_util as push_util
+from daily_schedule import within_window
 
 try:
     from dotenv import load_dotenv
@@ -195,6 +196,8 @@ class MiMotionRunner:
                 user_tokens[self.user] = user_token_info
                 self.log_str += f"查找到已绑定设备ID: {bound_device_id}\n"
 
+        if os.environ.get("GITHUB_EVENT_NAME") == "schedule" and not within_window():
+            return "已超过自动提交时段，本次跳过", False
         ok, msg = zeppHelper.post_fake_brand_data(step, app_token, self.user_id, device_id=bound_device_id)
         return f"修改步数（{step}）[" + msg + "]", ok
 
@@ -249,6 +252,7 @@ def execute():
         summary = f"\n执行账号总数{total}，成功：{success_count}，失败：{total - success_count}"
         print(summary)
         push_util.push_results(push_results, summary, push_config)
+        return success_count == total
     else:
         print(f"账号数长度[{len(user_list)}]和密码数长度[{len(passwd_list)}]不匹配，跳过执行")
         exit(1)
@@ -349,4 +353,4 @@ if __name__ == "__main__":
         print(f"多账号执行间隔：{sleep_seconds}")
         use_concurrent = False
     # endregion
-    execute()
+    exit(0 if execute() else 1)
