@@ -14,7 +14,7 @@ import os
 from util.aes_help import encrypt_data, decrypt_data
 import util.zepp_helper as zeppHelper
 import util.push_util as push_util
-from daily_schedule import within_window
+from daily_submit import within_window
 
 try:
     from dotenv import load_dotenv
@@ -196,7 +196,7 @@ class MiMotionRunner:
                 user_tokens[self.user] = user_token_info
                 self.log_str += f"查找到已绑定设备ID: {bound_device_id}\n"
 
-        if os.environ.get("GITHUB_EVENT_NAME") == "schedule" and not within_window():
+        if (os.environ.get("DAILY_AUTOMATIC") == "true" or os.environ.get("GITHUB_EVENT_NAME") == "schedule") and not within_window():
             return "已超过自动提交时段，本次跳过", False
         ok, msg = zeppHelper.post_fake_brand_data(step, app_token, self.user_id, device_id=bound_device_id)
         return f"修改步数（{step}）[" + msg + "]", ok

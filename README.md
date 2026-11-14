@@ -129,16 +129,19 @@
 
 ### 四、每日随机提交
 
-本 Fork 使用 Asia/Singapore 时区，每天 08:00–18:00 每 15 分钟检查一次。
-每天按日期选一个随机目标时间，到点后的第一次检查会提交 10000–19999 步。
-提交前再次检查时段，成功后记录日期，后续自动检查会跳过当天。
-手动 Run workflow 可以立即提交，并更新当天的成功记录。
-计划时间与最近成功日期记录在 `cron_change_time`。
+本 Fork 使用独立的 `daily_submit.py` 和“每日随机步数”工作流。
+GitHub 每小时第 17 分钟尝试触发，程序按 UTC+8 实际时间限制在 08:00–18:00 提交。
+当天第一次有效运行随机等待 20–40 分钟，在同一次运行中提交 10000–19999 步。
+临近 18:00 时缩短等待，17:55 后启动则立即尝试；接口调用前再次检查，18:00 起不发起提交。
+成功日期保存到 `daily_submission.json`，当天后续触发直接跳过，失败可由后续触发重试。
+旧的 `cron_change_time` 仅用于首次迁移已成功日期，不再选择每日目标时刻。
+手动 Run workflow 同样遵守时段、随机等待和当天去重；勾选 `dry_run` 只检查，不提交。
+GitHub 定时触发可能延迟或丢失，若整个白天均未启动，仍可能漏掉当天，代码不能保证平台准时触发。
 
 ### 五、手动触发测试工作流
 
-- 前往Actions,左侧选择 `刷步数`
-  ，快捷链接：[https://github.com/${你的github用户名}/mimotion/actions/workflows/run.yml](../../actions/workflows/run.yml)
+- 前往Actions,左侧选择 `每日随机步数`
+  ，快捷链接：[每日随机步数](../../actions/workflows/daily-steps.yml)
 - 新fork的仓库默认未启用工作流，进入Actions后点击 `I understand my workflows, go ahead and enable them`
   启用，然后左侧选择 `刷步数` 之后，再点击 `enable workflow` 启用工作流。请确保开启工作流，否则不会定时执行。
 - 点击右侧的`Run workflow`触发执行，触发后刷新即可查看执行记录。验证是否正确配置并执行刷步数。
